@@ -1,5 +1,6 @@
 package EmailApp;
 
+import java.sql.SQLOutput;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -14,16 +15,19 @@ public class Email {
     private String companySuffix = "ayecompany.com";
 
     // Constructor to receive the first name and last name
-
-    public Email(String firstName, String lastName){
+    public Email(String firstName, String lastName) throws InterruptedException{
         this.firstName = firstName;
         this.lastName = lastName;
-        System.out.println("EMAIL CREATED: " + firstName + " " + lastName);
         this.department = setDepartment();
         this.password = generatePassword(8);
-        System.out.println("Your password is: " + password);
         this.email = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@" + department.toLowerCase() + "." + companySuffix;
+        this.mailboxCapacity = 50;
+        Thread.sleep(500);
+        System.out.println("EMAIL CREATED: " + firstName + " " + lastName);
         System.out.println("Your email is: " + email);
+        System.out.println("Your password is: " + password);
+        System.out.println("Your mailbox capacity is: " + mailboxCapacity);
+        Thread.sleep(500);
     }
 
     private String setDepartment(){
@@ -40,6 +44,45 @@ public class Email {
             return "Acct";
         }
         else {return "";}
+    }
+
+    public void menuOfActions(int num){
+        if(num == 1){
+            if(this.alternateEmail != null){
+                System.out.println("Your alternate email is: " + alternateEmail);
+            }
+            else{
+                System.out.println("Enter your alternate email address: ");
+                Scanner scan = new Scanner(System.in);
+                String altEmail = scan.nextLine();
+                while(!altEmail.endsWith("@gmail.com")){
+                    System.out.println("Invalid email address, try again");
+                    altEmail = scan.nextLine();
+                }
+                setAlternateEmail(altEmail);
+                System.out.println("Alternate email was created.");
+            }
+        }
+        else if(num == 2){
+            System.out.println("Enter old password: ");
+            Scanner scan = new Scanner(System.in);
+            String oldPassword = scan.nextLine();
+            while(!oldPassword.equals(this.password)){
+                System.out.println("Passwords do not match, try again");
+                oldPassword = scan.nextLine();
+            }
+            System.out.println("Enter new password: ");
+            String newPassword = scan.nextLine();
+            while(newPassword.length() != 8){
+                System.out.println("Your password must be 8 digits long, try again");
+                newPassword = scan.nextLine();
+            }
+            changePassword(newPassword);
+            System.out.println("Password has been changed.");
+        }
+        else if(num == 3){
+            showInfo();
+        }
     }
 
     private String generatePassword(int length){
@@ -76,7 +119,7 @@ public class Email {
         return password;
     }
 
-    public String showInfo(){
-        return "NAME: " + firstName + " " + lastName + "\nCOMPANY EMAIL: " + email + "\nMAILBOX CAPACITY: " + mailboxCapacity + "mb";
+    public void showInfo(){
+        System.out.println("NAME: " + firstName + " " + lastName + "\nCOMPANY EMAIL: " + email + "\nPASSWORD: " + password + "\nMAILBOX CAPACITY: " + mailboxCapacity + "mb\nALTERNATE EMAIL: " + alternateEmail);
     }
 }
